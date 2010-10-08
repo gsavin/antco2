@@ -18,3 +18,6 @@ Authors:
   - Antoine Dutot <antoine.dutot@graphstream-project.org>
   - Guilhelm Savin <guilhelm.savin@graphstream-project.org>
 
+
+The old version of AntCo2 is in org/miv/antco2 whereas the new version is under
+org/graphstream/algorithm/antco2.
