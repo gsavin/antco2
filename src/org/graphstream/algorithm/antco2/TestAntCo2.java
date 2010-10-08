@@ -108,20 +108,18 @@ public class TestAntCo2
 	{
 		//generate("test-poi-graph.dgs",5000);
 		//antCo2("test-poi-graph.dgs");
-		antCo2OnGrid(20,5000);
+		antCo2OnGrid(new GridGenerator(),20,5000);
 	}
 	
-	public static void antCo2OnGrid( int size, int step )
+	public static void antCo2OnGrid( Generator gen, int size, int step )
 	{
 		ProgressDisplay pDisplay = new ProgressDisplay(0,step);
 		
 		Graph g = new DefaultGraph("theGraph");
 		AntCo2Algorithm antco2 = new AntCo2Algorithm();
-
-		GridGenerator gen = new GridGenerator();
 		
 		antco2.init(g);
-		/*
+	
 		g.display(false);
 		
 		String stylesheet = 
@@ -132,6 +130,7 @@ public class TestAntCo2
 			"node { " + 
 			"  fill-mode: dyn-plain;" + 
 			"  fill-color: red,green,blue,yellow,orange,pink,purple;" + 
+			"  size: 20px;" +
 			"}" + 
 			"node .membrane {" + 
 			"}" +
@@ -142,7 +141,7 @@ public class TestAntCo2
 		g.addAttribute( "ui.stylesheet", stylesheet );
 		g.addAttribute( "ui.quality" );
 		//g.addAttribute( "ui.antialias" );
-		*/
+		
 		
 		g.addAttribute( "antco2.resources", "+ A" );
 		g.addAttribute( "antco2.resources", "+ B" );

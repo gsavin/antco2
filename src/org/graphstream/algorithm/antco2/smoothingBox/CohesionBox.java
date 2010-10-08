@@ -65,20 +65,19 @@ public class CohesionBox
 			if( coloniesAttraction [index] == 0 )
 				coloniesAttraction [index] = initialAttraction;
 			
-			coloniesAttraction [index] = (float) pow( coloniesAttraction [index], 1 - attractionFactor );
+			float per = lowNodeCountAttraction(c);
+			
+			coloniesAttraction [index] = (float) pow( coloniesAttraction [index], 1 - attractionFactor * per );
+			//coloniesAttraction [index] = Math.min( coloniesAttraction [index] * (1 + attractionFactor), 1);
 		}
 		
-		void neighbor( int index )
+		void neighbor( int index, float per )
 		{
 			checkBounds(index);
 			
-			//for( int i = 0; i < coloniesAttraction.length; i++ )
-			//	coloniesAttraction [i] = (float) pow( coloniesAttraction [i], i == index ? 1 - neighborAttraction : 1 + neighborPushing );
-			
-			//if( index == node.getColor().getIndex() )
-			coloniesAttraction [index] = (float) pow( coloniesAttraction [index], 1 - neighborAttraction );
-			//else
-			//	coloniesAttraction [index] = (float) pow( coloniesAttraction [index], 1 + neighborPushing );
+			//coloniesAttraction [index] = (float) pow( coloniesAttraction [index], 1 - neighborAttraction );
+			coloniesAttraction [index] *=  1 + neighborAttraction * ( 1 - per );
+			//coloniesAttraction [index] = Math.min( coloniesAttraction [index] * (1 + neighborAttraction), 1);
 		}
 		
 		int colonyIndex()
@@ -94,6 +93,7 @@ public class CohesionBox
 		void tension()
 		{
 			for( int i = 0; i < coloniesAttraction.length; i++ )
+				//coloniesAttraction [i] = (float) pow( coloniesAttraction [i], 1 + tension );//tension;
 				coloniesAttraction [i] *= tension;
 			
 			for( AntCo2Edge edge : node.<AntCo2Edge>getEdgeSet() )
@@ -101,19 +101,29 @@ public class CohesionBox
 				AntCo2Node ne = edge.getOpposite(node);
 				
 				if( ne.getColor() != null )
-					neighbor( ne.getColor().getIndex() );
+				{
+					float per = lowNodeCountAttraction(ne.getColor());
+					neighbor( ne.getColor().getIndex(), per );
+				}
 			}
 			
 			if( node.getColor() != null )
-				neighbor( node.getColor().getIndex() );
+				neighbor( node.getColor().getIndex(), 2 );
+		}
+		
+		float lowNodeCountAttraction( Colony c )
+		{
+			return 1;// + lowNodeCountAttraction * ( 1 - c.getNodeCount() / (float) ctx.getNodeCount() );
 		}
 	}
 	
 	protected static float initialAttraction = 0.001f;
-	protected static float attractionFactor = 0.125f;
-	protected static float neighborAttraction = 0.1f;
-	protected static float neighborPushing = 0.05f;
+	protected static float attractionFactor = 0.25f;
+	protected static float neighborAttraction = 0.125f;
+	//protected static float neighborPushing = 0.05f;
 	protected static float tension = 0.99f;
+	
+	protected static float lowNodeCountAttraction = 0.1f;
 	
 	protected HashMap<String,CohesionData> data;
 	protected AntContext ctx;

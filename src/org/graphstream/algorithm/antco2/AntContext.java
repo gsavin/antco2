@@ -192,14 +192,14 @@ public class AntContext
 	 */
 	public AntContext()
 	{
-		smoothingBox = new IdentityBox();
-		outputMeasures = "measures-identity.dat";
+		//smoothingBox = new IdentityBox();
+		//outputMeasures = "measures-identity.dat";
 		//smoothingBox = new TimedBox(2,TimeUnit.SECONDS);
 		//outputMeasures = "measures-timed.dat";
 		//smoothingBox = new RandomTimedBox(2000,TimeUnit.MILLISECONDS,0.2);
 		//outputMeasures = "measures-random-timed.dat";
-		//smoothingBox = new CohesionBox();
-		//outputMeasures = "measures-cohesion.dat";
+		smoothingBox = new CohesionBox();
+		outputMeasures = "measures-cohesion.dat";
 		
 		colonies = new ArrayList<Colony>();
 		coloniesAsIterable = new ColonyIterable();
