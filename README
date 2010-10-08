@@ -1,0 +1,20 @@
+================================================================================
+AntCo2 : Dynamic Load Balancing
+================================================================================
+
+AntCo2 is a dynamic load balancing algorithm, which works on a dynamic graph. It
+uses ant colonies to color nodes of the graph. 
+
+AntCo2 uses the dynamic graph library GraphStream 
+( http://graphstream-project.org ) to model the graph on which the algorithm is
+working.
+
+
+This algorithm has been created in the PhD thesis of Antoine Dutot (
+http://litis.univ-lehavre.fr/~dutot/biblio/PhdThesisDutot.pdf ).
+
+
+Authors:
+  - Antoine Dutot <antoine.dutot@graphstream-project.org>
+  - Guilhelm Savin <guilhelm.savin@graphstream-project.org>
+
