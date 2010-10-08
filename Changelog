@@ -1,0 +1,10 @@
+* May 27:
+	- Added the ability to output a DGS with colors from the start of a
+	  simulation until the end. The DGS records all changes with nodes, edges
+	  and colors.
+	- org.miv.antco2.AntCO2,
+	- org.miv.antco2.AntParams,
+	- org.miv.antco2.AntParams.
+
+* Before:
+	- No changelog. Too bad.
