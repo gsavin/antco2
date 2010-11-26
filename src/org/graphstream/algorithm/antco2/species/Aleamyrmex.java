@@ -24,54 +24,47 @@ import org.graphstream.algorithm.antco2.Colony;
 
 /**
  * Aleamyrmex.
- *
+ * 
  * @author Antoine Dutot
  * @since 29 juil. 2005
  */
-public class Aleamyrmex
-	extends Ant
-{
-// Constructors
+public class Aleamyrmex extends Ant {
+	// Constructors
 
-	public Aleamyrmex( String id, Colony colony,
-			AntCo2Node startNode, AntContext context )
-	{
-		super( id, colony, startNode, context );
+	public Aleamyrmex(String id, Colony colony, AntCo2Node startNode,
+			AntContext context) {
+		super(id, colony, startNode, context);
 	}
 
-// Accessors
+	// Accessors
 
 	@Override
-	public float getPheromonDrop()
-	{
+	public float getPheromonDrop() {
 		return 0.01f;
 	}
-	
-// Commands
-	
+
+	// Commands
+
 	@Override
-	public void step()
-	{
+	public void step() {
 		randomStep();
 	}
-	
+
 	/**
 	 * Choose the next node randomly.
 	 */
-	protected void randomStep()
-	{
+	protected void randomStep() {
 		int n = curNode.getDegree();
 		int r = 0;
-		
-		if( n > 0 )
-		{
-			r = ctx.random().nextInt( n );
-		
+
+		if (n > 0) {
+			r = ctx.random().nextInt(n);
+
 			AntCo2Edge curEdge = (AntCo2Edge) curNode.getEdge(r);
-		
+
 			assert curEdge != null : "found no edge";
-			
-			cross( curEdge, true );
+
+			cross(curEdge, true);
 		}
 	}
 }

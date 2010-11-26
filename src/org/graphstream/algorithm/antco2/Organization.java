@@ -27,47 +27,41 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.stream.Sink;
 
-public class Organization
-	implements Sink
-{
+public class Organization implements Sink {
 	String organizationAttribute;
 	String organizationComponentAttribute;
-	
+
 	HashSet<String> entities;
 	Graph graph;
 	Object organizationTag;
 	Object organizationComponentTag;
-	
-	public void entityTagChanged( String nodeId, Object newTag )
-	{
+
+	public void entityTagChanged(String nodeId, Object newTag) {
 		//
 		// If entities is already in the organization ...
 		//
-		if( entities.contains(nodeId) )
-		{
+		if (entities.contains(nodeId)) {
 			//
-			// ... and if its organization tag is not its  of the organization, 
+			// ... and if its organization tag is not its of the organization,
 			// so entity is leaving the organization.
 			//
-			if( ! organizationTag.equals(newTag) )
+			if (!organizationTag.equals(newTag))
 				entityLeavesOrganization(nodeId);
 		}
 		//
-		// ... or if entity is not in the organization but 
+		// ... or if entity is not in the organization but
 		// its tag is that of the organization ...
 		//
-		else if( organizationTag.equals(newTag) )
-		{
+		else if (organizationTag.equals(newTag)) {
 			//
-			// ... we have to check is this entity is connected to a member of this organization ...
+			// ... we have to check is this entity is connected to a member of
+			// this organization ...
 			//
 			Node node = graph.getNode(nodeId);
 			boolean flag = false;
-			
-			for( Edge e : node.getEdgeSet() )
-			{
-				if( entities.contains( e.getOpposite(node).getId() ) )
-				{
+
+			for (Edge e : node.getEdgeSet()) {
+				if (entities.contains(e.getOpposite(node).getId())) {
 					flag = true;
 					break;
 				}
@@ -75,109 +69,100 @@ public class Organization
 			//
 			// ... in this case, entity joins the organization.
 			//
-			if( flag )
+			if (flag)
 				entityJoinsOrganization(nodeId);
 		}
 	}
-	
-	public void entityLeavesOrganization( String nodeId )
-	{
-		
+
+	public void entityLeavesOrganization(String nodeId) {
+
 	}
-	
-	public void entityJoinsOrganization( String nodeId )
-	{
-		
+
+	public void entityJoinsOrganization(String nodeId) {
+
 	}
 
 	public void nodeAttributeAdded(String sourceId, long timeId, String nodeId,
-			String attribute, Object value)
-	{
-		if( attribute.equals( organizationAttribute ) )
-			entityTagChanged( nodeId, value );
+			String attribute, Object value) {
+		if (attribute.equals(organizationAttribute))
+			entityTagChanged(nodeId, value);
 	}
 
 	public void nodeAttributeChanged(String sourceId, long timeId,
-			String nodeId, String attribute, Object oldValue, Object newValue)
-	{
-		if( attribute.equals( organizationAttribute ) )
-			entityTagChanged( nodeId, newValue );
+			String nodeId, String attribute, Object oldValue, Object newValue) {
+		if (attribute.equals(organizationAttribute))
+			entityTagChanged(nodeId, newValue);
 	}
 
 	public void nodeAttributeRemoved(String sourceId, long timeId,
-			String nodeId, String attribute)
-	{
-		if( attribute.equals( organizationAttribute ) )
-			entityTagChanged( nodeId, null );
+			String nodeId, String attribute) {
+		if (attribute.equals(organizationAttribute))
+			entityTagChanged(nodeId, null);
 	}
 
-	public void nodeRemoved(String sourceId, long timeId, String nodeId)
-	{
-		if( entities.contains(nodeId) )
-		{
-			
+	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
+		if (entities.contains(nodeId)) {
+
 		}
 	}
 
-	public void edgeRemoved(String sourceId, long timeId, String edgeId)
-	{
-		
+	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
+
 	}
 
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed)
-	{
-		
+			String fromNodeId, String toNodeId, boolean directed) {
+
 	}
-	
+
 	public void graphAttributeAdded(String sourceId, long timeId,
 			String attribute, Object value) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void graphAttributeChanged(String sourceId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void graphAttributeRemoved(String sourceId, long timeId,
 			String attribute) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void edgeAttributeAdded(String sourceId, long timeId, String edgeId,
 			String attribute, Object value) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void edgeAttributeChanged(String sourceId, long timeId,
 			String edgeId, String attribute, Object oldValue, Object newValue) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void edgeAttributeRemoved(String sourceId, long timeId,
 			String edgeId, String attribute) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void nodeAdded(String sourceId, long timeId, String nodeId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void graphCleared(String sourceId, long timeId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void stepBegins(String sourceId, long timeId, double step) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

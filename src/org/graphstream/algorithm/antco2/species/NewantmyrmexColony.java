@@ -22,27 +22,21 @@ import org.graphstream.algorithm.antco2.AntContext;
 import org.graphstream.algorithm.antco2.AntFactory;
 import org.graphstream.algorithm.antco2.Colony;
 
-public class NewantmyrmexColony
-	extends Colony
-{
-	class NewantmyrmexFactory
-		implements AntFactory
-	{
-		public Ant newAnt( String id, AntCo2Node start )
-		{
-			return new Newantmyrmex(id,NewantmyrmexColony.this,start,ctx);
+public class NewantmyrmexColony extends Colony {
+	class NewantmyrmexFactory implements AntFactory {
+		public Ant newAnt(String id, AntCo2Node start) {
+			return new Newantmyrmex(id, NewantmyrmexColony.this, start, ctx);
 		}
 	}
-//	Constructors
-	
-	public NewantmyrmexColony()
-	{
+
+	// Constructors
+
+	public NewantmyrmexColony() {
 		antFactory = new NewantmyrmexFactory();
 	}
-	
-	public NewantmyrmexColony( AntContext context, String name, int index )
-	{
-		super( context, name, index );
+
+	public NewantmyrmexColony(AntContext context, String name, int index) {
+		super(context, name, index);
 		antFactory = new NewantmyrmexFactory();
 	}
 }

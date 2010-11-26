@@ -28,42 +28,37 @@ import org.graphstream.algorithm.antco2.Colony;
 import org.graphstream.algorithm.antco2.Measure;
 import org.graphstream.graph.Graph;
 
-public class R3
-	implements Measure
-{
+public class R3 implements Measure {
 	double m;
 	double w = 2;
-	
+
 	Graph graph;
-	
-	public void init(Graph graph)
-	{
+
+	public void init(Graph graph) {
 		this.graph = graph;
 	}
 
 	public void compute() {
-		if( graph instanceof AntCo2Graph )
-		{
+		if (graph instanceof AntCo2Graph) {
 			AntCo2Graph ag = (AntCo2Graph) graph;
-			
+
 			double s = 0;
-			//double t = 0;
-			for( Colony c : ag.getAntContext().eachColony() )
-			{
-				s = max( s, (double) c.getMigrationCountForThisStep() / (double) c.getNodeCountAtStepBeginning() );
-				//s += c.getMigrationCountForThisStep();
-				//t += c.getNodeCountAtStepBeginning();
+			// double t = 0;
+			for (Colony c : ag.getAntContext().eachColony()) {
+				s = max(s, (double) c.getMigrationCountForThisStep()
+						/ (double) c.getNodeCountAtStepBeginning());
+				// s += c.getMigrationCountForThisStep();
+				// t += c.getNodeCountAtStepBeginning();
 			}
-			
-			//s /= t;
-			
-			m = pow( s, 1.0 / w );
-		}
-		else throw new ClassCastException("graph is not a AntCo2Graph");
+
+			// s /= t;
+
+			m = pow(s, 1.0 / w);
+		} else
+			throw new ClassCastException("graph is not a AntCo2Graph");
 	}
 
-	public double getValue()
-	{
+	public double getValue() {
 		return m;
 	}
 

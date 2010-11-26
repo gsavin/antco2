@@ -26,13 +26,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  * The base-class for defining ants.
  * 
  * @author adutot, gsavin
- *
+ * 
  */
-public abstract class Ant
-{
+public abstract class Ant {
 	protected static long automaticId = 0;
 	protected static AtomicInteger automaticIdAtomic = new AtomicInteger(0);
-	
+
 	/**
 	 * The id of this ant.
 	 */
@@ -44,12 +43,12 @@ public abstract class Ant
 	/**
 	 * The position (node) of the ant.
 	 */
-	protected AntCo2Node	curNode;
+	protected AntCo2Node curNode;
 	/**
 	 * The context in which this ant evolve.
 	 */
-	protected AntContext	ctx;
-	
+	protected AntContext ctx;
+
 	/**
 	 * Constructor for an ant.
 	 * 
@@ -58,164 +57,166 @@ public abstract class Ant
 	 * @param start
 	 * @param ctx
 	 */
-	public Ant( String id, Colony colony, AntCo2Node start, AntContext ctx )
-	{
-		if( id == null )
-			//id = String.format( "ant-%X-%X", automaticId++, System.currentTimeMillis() ).toLowerCase();
-			id = String.format( "ant-%X", automaticIdAtomic.getAndIncrement() );
-		
+	public Ant(String id, Colony colony, AntCo2Node start, AntContext ctx) {
+		if (id == null)
+			// id = String.format( "ant-%X-%X", automaticId++,
+			// System.currentTimeMillis() ).toLowerCase();
+			id = String.format("ant-%X", automaticIdAtomic.getAndIncrement());
+
 		this.id = id;
 		this.colony = colony;
 		this.ctx = ctx;
-		
+
 		goTo(start);
 	}
-	
+
 	/**
 	 * Accessor for the id attribute.
+	 * 
 	 * @return id of this ant
 	 */
-	public String getId()
-	{
+	public String getId() {
 		return id;
 	}
 
 	/**
 	 * Accessor for the colony attribute.
+	 * 
 	 * @return colony of this ant
 	 */
-	public Colony getColony()
-	{
+	public Colony getColony() {
 		return colony;
 	}
 
 	/**
 	 * Accessor for the position attribute.
+	 * 
 	 * @return position of this ant
 	 */
-	public AntCo2Node getCurrentNode()
-	{
+	public AntCo2Node getCurrentNode() {
 		return curNode;
 	}
-	
-	/**
-	 * Ask the ant to travel from its current node to the given new node. The new node can be null,
-	 * in which case the ant disappear from the environment and becomes inactive. The destination
-	 * node needs not to be connected via an edge to the current node. This is also called a jump.
-	 * @param newNode The destination node.
-	 */
-	public void goTo( AntCo2Node newNode )
-	{
-		if( curNode != null )
-			curNode.unregisterAnt( this );
 
-		if( newNode != null )
-			newNode.registerAnt( this );
+	/**
+	 * Ask the ant to travel from its current node to the given new node. The
+	 * new node can be null, in which case the ant disappear from the
+	 * environment and becomes inactive. The destination node needs not to be
+	 * connected via an edge to the current node. This is also called a jump.
+	 * 
+	 * @param newNode
+	 *            The destination node.
+	 */
+	public void goTo(AntCo2Node newNode) {
+		if (curNode != null)
+			curNode.unregisterAnt(this);
+
+		if (newNode != null)
+			newNode.registerAnt(this);
 
 		curNode = newNode;
 	}
 
 	/**
 	 * Go to the opposite node of the current node via the given edge.
-	 * @param edge The edge to cross.
-	 * @param dropPheromon If true an amount of pheromone defined by {@link #getPheromonDrop()} is
-	 *        deposited on the edge.
-	 * @throws IllegalArgumentException If the edge is not connected to the current node (or if the
-	 *         current node is null).
+	 * 
+	 * @param edge
+	 *            The edge to cross.
+	 * @param dropPheromon
+	 *            If true an amount of pheromone defined by
+	 *            {@link #getPheromonDrop()} is deposited on the edge.
+	 * @throws IllegalArgumentException
+	 *             If the edge is not connected to the current node (or if the
+	 *             current node is null).
 	 */
-	public void cross( AntCo2Edge edge, boolean dropPheromon )
-		throws IllegalArgumentException
-	{
+	public void cross(AntCo2Edge edge, boolean dropPheromon)
+			throws IllegalArgumentException {
 		assert edge != null : "cannot cross null edge";
 
-		if( curNode == null )
+		if (curNode == null)
 			throw new IllegalArgumentException(
-			        "cannot cross an edge if the current node is null, use goTo()" );
+					"cannot cross an edge if the current node is null, use goTo()");
 
-		if( curNode != edge.getSourceNode() && curNode != edge.getTargetNode() )
+		if (curNode != edge.getSourceNode() && curNode != edge.getTargetNode())
 			throw new IllegalArgumentException(
-			        "the current node is not connected to the given edge" );
+					"the current node is not connected to the given edge");
 
-		AntCo2Node newNode = (AntCo2Node) edge.getOpposite( curNode );
+		AntCo2Node newNode = (AntCo2Node) edge.getOpposite(curNode);
 
-		if( dropPheromon )
-			edge.incrPheromon( colony, getPheromonDrop() );
-		
-		goTo( newNode );
+		if (dropPheromon)
+			edge.incrPheromon(colony, getPheromonDrop());
+
+		goTo(newNode);
 	}
-	
+
 	/**
-	 * Jump to a random node in the graph.
-	 * This method is quite heavy and may, at worst, iterate
-	 *  on all nodes of the graph.
+	 * Jump to a random node in the graph. This method is quite heavy and may,
+	 * at worst, iterate on all nodes of the graph.
 	 */
-	protected void jumpRandomly()
-	{
-		AntCo2Node               node  = null;
-		int                      n     = ctx.getNodeCount();
-		
-		if( n <= 0 )
+	protected void jumpRandomly() {
+		AntCo2Node node = null;
+		int n = ctx.getNodeCount();
+
+		if (n <= 0)
 			return;
-		
-		int                      r     = ctx.random().nextInt( n );
-		int                      i     = 0;
-		
-		for( AntCo2Node tmpNode : ctx.eachNode() )
-		{
-			if( i == r )
-			{
+
+		int r = ctx.random().nextInt(n);
+		int i = 0;
+
+		for (AntCo2Node tmpNode : ctx.eachNode()) {
+			if (i == r) {
 				node = tmpNode;
 				break;
 			}
-			
+
 			i++;
 		}
-		
+
 		assert node != null : "jumpRandomly() got a null node to jump to!";
-		//System.err.printf( "Jumping randomly from node %s to node %s.%n", curNode.getTag(), node.getTag() );
-		
-		ctx.incrJumps( this );
-		goTo( node );
+		// System.err.printf( "Jumping randomly from node %s to node %s.%n",
+		// curNode.getTag(), node.getTag() );
+
+		ctx.incrJumps(this);
+		goTo(node);
 	}
 
 	/**
 	 * Jump from node to node, choosing the edges to cross randomly. This
-	 * method, contrary to {@link #jumpRandomly()} follow the graph topoly
-	 * to jump far away. Given a current node, the ant chooses randomly
-	 * one of its edges and jump to the opposite node. It does so
-	 * a given number of times.
-	 * @param howFar How many jumps to do.
-	 * @throws IllegalArgumentException If the jump is less than 1.
+	 * method, contrary to {@link #jumpRandomly()} follow the graph topoly to
+	 * jump far away. Given a current node, the ant chooses randomly one of its
+	 * edges and jump to the opposite node. It does so a given number of times.
+	 * 
+	 * @param howFar
+	 *            How many jumps to do.
+	 * @throws IllegalArgumentException
+	 *             If the jump is less than 1.
 	 */
-	protected void jumpFarAway( int howFar )
-		throws IllegalArgumentException
-	{
-		int  rand;
+	protected void jumpFarAway(int howFar) throws IllegalArgumentException {
+		int rand;
 		AntCo2Node node = curNode;
-		
-		if( howFar < 1 )
-			throw new IllegalArgumentException( "jumps must be larger than 1" );
 
-		if( curNode.getDegree() == 0 )
+		if (howFar < 1)
+			throw new IllegalArgumentException("jumps must be larger than 1");
+
+		if (curNode.getDegree() == 0)
 			return;
-		
-		for( int i=0; i<howFar; ++i )
-		{
-			rand = ctx.random().nextInt( node.getDegree() );
-			node = (AntCo2Node) node.getEdge( rand ).getOpposite( node );
+
+		for (int i = 0; i < howFar; ++i) {
+			rand = ctx.random().nextInt(node.getDegree());
+			node = (AntCo2Node) node.getEdge(rand).getOpposite(node);
 		}
-		
-		ctx.incrJumps( this );
-		goTo( node );
+
+		ctx.incrJumps(this);
+		goTo(node);
 	}
-	
+
 	/**
 	 * Defines what this ant will do at each step.
 	 */
 	public abstract void step();
-	
+
 	/**
 	 * Defines the amoung of pheromons drop by this ant at each edge-cross.
+	 * 
 	 * @return the pheromon drop
 	 */
 	public abstract float getPheromonDrop();

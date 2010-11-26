@@ -25,33 +25,26 @@ import java.util.concurrent.TimeUnit;
 import org.graphstream.algorithm.antco2.AntCo2Node;
 import org.graphstream.algorithm.antco2.Colony;
 
-public class RandomTimedBox
-	extends TimedBox
-{
+public class RandomTimedBox extends TimedBox {
 	double randomize;
-	
-	public RandomTimedBox( long delay, TimeUnit unit, double randomize )
-	{
+
+	public RandomTimedBox(long delay, TimeUnit unit, double randomize) {
 		super(delay, unit);
 		this.randomize = randomize;
 	}
-	
-	public void submitColor( AntCo2Node node, Colony oldColor, Colony newColor )
-	{
+
+	public void submitColor(AntCo2Node node, Colony oldColor, Colony newColor) {
 		Delay delay = delays.get(node.getId());
-		
-		if( delay == null )
-		{
+
+		if (delay == null) {
 			delay = new Delay();
-			delays.put(node.getId(),delay);
+			delays.put(node.getId(), delay);
 			node.setColor(newColor);
-		}
-		else
-		{
+		} else {
 			double delta = randomize * this.delay;
-			
-			if( delay.getDelay(this.unit) > this.delay + ( delta * ctx.random().nextDouble() - delta / 2.0 ) )
-			{
+
+			if (delay.getDelay(this.unit) > this.delay
+					+ (delta * ctx.random().nextDouble() - delta / 2.0)) {
 				node.setColor(newColor);
 				delay.reset();
 			}

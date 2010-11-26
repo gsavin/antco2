@@ -30,67 +30,62 @@ import org.graphstream.graph.implementations.AdjacencyListGraph;
  * The internal graph of AntCo2.
  * 
  * @author adutot, gsavin
- *
+ * 
  */
-public class AntCo2Graph
-	extends AdjacencyListGraph
-{
+public class AntCo2Graph extends AdjacencyListGraph {
 	/**
 	 * The context of this graph.
 	 */
 	protected AntContext ctx;
-	
+
 	/**
 	 * Constructor for the graph.
-	 * @param context context in which ants will evolve
+	 * 
+	 * @param context
+	 *            context in which ants will evolve
 	 */
-	public AntCo2Graph( AntContext context )
-	{
-		super( String.format( "antco2-%X@%X", System.currentTimeMillis(), Thread.currentThread().getId() ) );
-		
+	public AntCo2Graph(AntContext context) {
+		super(String.format("antco2-%X@%X", System.currentTimeMillis(), Thread
+				.currentThread().getId()));
+
 		this.ctx = context;
-		
-		this.nodeFactory = new NodeFactory<AntCo2Node>()
-		{
-			public AntCo2Node newInstance(String id, Graph graph)
-			{
-				Colony c = ctx.getColonyCount() > 0 ? 
-						ctx.getColony(ctx.random().nextInt(ctx.getColonyCount())) : null;
-				
-				return new AntCo2Node(ctx,c,graph,id);
+
+		this.nodeFactory = new NodeFactory<AntCo2Node>() {
+			public AntCo2Node newInstance(String id, Graph graph) {
+				Colony c = ctx.getColonyCount() > 0 ? ctx.getColony(ctx
+						.random().nextInt(ctx.getColonyCount())) : null;
+
+				return new AntCo2Node(ctx, c, graph, id);
 			}
 		};
 
-		this.edgeFactory = new EdgeFactory<AntCo2Edge>()
-		{
+		this.edgeFactory = new EdgeFactory<AntCo2Edge>() {
 			public AntCo2Edge newInstance(String id, Node src, Node dst,
-					boolean directed)
-			{
-				return new AntCo2Edge(ctx,1,id,src,dst,directed);
+					boolean directed) {
+				return new AntCo2Edge(ctx, 1, id, src, dst, directed);
 			}
 		};
 	}
-	
+
 	/**
 	 * Iterate over edges as AntCo2Edge.
+	 * 
 	 * @return an iterable over edges of the graph
 	 */
-	public Iterable<? extends AntCo2Edge> antco2EdgeSet()
-	{
+	public Iterable<? extends AntCo2Edge> antco2EdgeSet() {
 		return getEachEdge();
 	}
-	
+
 	/**
 	 * Iterate over nodes as AntCo2Node.
+	 * 
 	 * @return an iterable over nodes of the graph
 	 */
-	public Iterable<? extends AntCo2Node> antco2NodeSet()
-	{
+	public Iterable<? extends AntCo2Node> antco2NodeSet() {
 		return getEachNode();
 	}
-	
-	public AntContext getAntContext()
-	{
+
+	public AntContext getAntContext() {
 		return ctx;
 	}
 }

@@ -26,30 +26,28 @@ import org.graphstream.algorithm.antco2.Colony;
 import org.graphstream.algorithm.antco2.Measure;
 import org.graphstream.graph.Graph;
 
-public class Data
-	implements Measure
-{
+public class Data implements Measure {
 	double data;
 	Graph graph;
-	
+
 	public void init(Graph graph) {
 		this.graph = graph;
 	}
 
 	public void compute() {
-		
+
 		data = 0;
-		
-		if( graph instanceof AntCo2Graph )
-		{
+
+		if (graph instanceof AntCo2Graph) {
 			AntCo2Graph ag = (AntCo2Graph) graph;
-			
-			for( Colony c : ag.getAntContext().eachColony() )
+
+			for (Colony c : ag.getAntContext().eachColony())
 				data += c.getMigrationCostForThisStep();
 		}
-		
-		for( AntCo2Edge e : graph.<AntCo2Edge>getEachEdge() )
-			if( e.isCutEdge() ) data += e.getValue();
+
+		for (AntCo2Edge e : graph.<AntCo2Edge> getEachEdge())
+			if (e.isCutEdge())
+				data += e.getValue();
 	}
 
 	public double getValue() {

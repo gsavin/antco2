@@ -31,191 +31,179 @@ import java.util.LinkedList;
  * @author antoine
  * @since 2005/12/20
  */
-public class Newantmyrmex 
-	extends Ant
-{
-// Attributes
-	
+public class Newantmyrmex extends Ant {
+	// Attributes
+
 	/**
 	 * Ant memory.
 	 */
 	protected LinkedList<AntCo2Node> mem = new LinkedList<AntCo2Node>();
-	
+
 	/**
 	 * Perceived pheromone array. This should be alloced at each call to step(),
 	 * but to avoid such an overhead, an over-sized array is created and only
 	 * re-allocated when it is too small.
 	 */
 	protected float P[] = new float[30];
-	
-// Constructors
-	
-	public Newantmyrmex( String id, Colony colony, AntCo2Node startNode, AntContext context )
-	{
-		super( id, colony, startNode, context );
+
+	// Constructors
+
+	public Newantmyrmex(String id, Colony colony, AntCo2Node startNode,
+			AntContext context) {
+		super(id, colony, startNode, context);
 	}
-	
-// Accessors	
-	
-	public float getPheromonDrop()
-	{
+
+	// Accessors
+
+	public float getPheromonDrop() {
 		return 0.1f;
 	}
 
 	/**
 	 * Is the given node in the ant memory?.
-	 * @param node The node to test.
+	 * 
+	 * @param node
+	 *            The node to test.
 	 * @return True if the ant remembers the node.
 	 */
-	protected boolean isRemembered( AntCo2Node node )
-	{
-		return mem.contains( node );
+	protected boolean isRemembered(AntCo2Node node) {
+		return mem.contains(node);
 	}
 
-// Commands
-	
-	protected float perceivedPheromonValue( AntCo2Edge edge )
-	{
+	// Commands
+
+	protected float perceivedPheromonValue(AntCo2Edge edge) {
 		return 0;
 	}
-	
-	protected float correction( AntCo2Edge edge )
-	{
+
+	protected float correction(AntCo2Edge edge) {
 		return 1;
 	}
-	
-	protected AntCo2Edge chooseEdge( float P[], float totalP, int nEdges )
-	{
-		if( totalP > 0 )
-		{
+
+	protected AntCo2Edge chooseEdge(float P[], float totalP, int nEdges) {
+		if (totalP > 0) {
 			float r = ctx.random().nextFloat();
 			float s = 0;
-		
-			for( int i=0; i<nEdges; ++i )
-			{
-				s += P[i]/totalP;
-			
-				if( s >= r )
-					return (AntCo2Edge) curNode.getEdge( i );
+
+			for (int i = 0; i < nEdges; ++i) {
+				s += P[i] / totalP;
+
+				if (s >= r)
+					return (AntCo2Edge) curNode.getEdge(i);
 			}
-			
-			return (AntCo2Edge) curNode.getEdge( nEdges - 1 );
+
+			return (AntCo2Edge) curNode.getEdge(nEdges - 1);
+		} else {
+			int r = ctx.random().nextInt(nEdges);
+
+			return (AntCo2Edge) curNode.getEdge(r);
 		}
-		else
-		{
-			int r = ctx.random().nextInt( nEdges );
-			
-			return (AntCo2Edge) curNode.getEdge( r );
-		}
-		
-		//throw new RuntimeException( "No Edge Choosen!!!" );
+
+		// throw new RuntimeException( "No Edge Choosen!!!" );
 	}
-	
+
 	protected int forHowLong = 0;
-	
-	public void step()
-	{
+
+	public void step() {
 		// This behavior make the ant choose arcs randomly and jump if it is
 		// in an environment where too many ants of other colonies are.
-		
-		int       nEdges         = curNode.getDegree();		// Number of edges.
-		float     totalPerceived = 0;						// Perceived pheromone total on all incident edges.
-//		float     totalPop       = 0;						// Total population of the ant color on all incident edges.
-		float     totalMyColor   = 0;						// Pheromone total of color c on all incident edges, with c = ant color.
-		float     total          = 0;						// Pheromone total on all indicent edges.
-		AntParams params         = ctx.getAntParams();
-		AntCo2Edge      next           = null;					// Next edge to cross.
-		
-		if( P.length <= nEdges )
-			P = new float[nEdges];
-		
-		if( nEdges <= 0 )
-		{
-			jumpRandomly();
-		}
-		else
-		{
-			for( int i=0; i<nEdges; ++i )
-			{
-				AntCo2Edge edge  = (AntCo2Edge) curNode.getEdge( i );
-				
-				//P[i] = (float) Math.pow( perceivedPheromonValue( edge ), params.alpha )
-				//     * (float) Math.pow( info.getValue(), params.beta )
-				//     * correction( edge );
-				P[i] = (float) Math.pow( edge.getValue(), params.beta ) * correction( edge );
-				
-				totalPerceived += P[i];
-				totalMyColor   += edge.getPheromon( colony.getIndex() );
-				total          += edge.getPheromonTotal();
-//				totalPop       += ((NodeInfos)edge.getOpposite( curNode ).getAttribute( NodeInfos.ATTRIBUTE_NAME )).getAntCountForColor( color );;
-			}
-			
-//			totalPop += ((NodeInfos)curNode.getAttribute(NodeInfos.ATTRIBUTE_NAME)).getAntCountForColor( color );
-			
-//			float overpop     = totalPop / ( nEdges + 1 );
-			float agoraphobia = totalMyColor / total;
-			
-//			System.out.printf( " [%f/%d] (%f)%n", overpop, params.overPopulated, totalPop );
 
-			if( forHowLong < params.jump )
-			{
+		int nEdges = curNode.getDegree(); // Number of edges.
+		float totalPerceived = 0; // Perceived pheromone total on all incident
+									// edges.
+		// float totalPop = 0; // Total population of the ant color on all
+		// incident edges.
+		float totalMyColor = 0; // Pheromone total of color c on all incident
+								// edges, with c = ant color.
+		float total = 0; // Pheromone total on all indicent edges.
+		AntParams params = ctx.getAntParams();
+		AntCo2Edge next = null; // Next edge to cross.
+
+		if (P.length <= nEdges)
+			P = new float[nEdges];
+
+		if (nEdges <= 0) {
+			jumpRandomly();
+		} else {
+			for (int i = 0; i < nEdges; ++i) {
+				AntCo2Edge edge = (AntCo2Edge) curNode.getEdge(i);
+
+				// P[i] = (float) Math.pow( perceivedPheromonValue( edge ),
+				// params.alpha )
+				// * (float) Math.pow( info.getValue(), params.beta )
+				// * correction( edge );
+				P[i] = (float) Math.pow(edge.getValue(), params.beta)
+						* correction(edge);
+
+				totalPerceived += P[i];
+				totalMyColor += edge.getPheromon(colony.getIndex());
+				total += edge.getPheromonTotal();
+				// totalPop += ((NodeInfos)edge.getOpposite( curNode
+				// ).getAttribute( NodeInfos.ATTRIBUTE_NAME
+				// )).getAntCountForColor( color );;
+			}
+
+			// totalPop +=
+			// ((NodeInfos)curNode.getAttribute(NodeInfos.ATTRIBUTE_NAME)).getAntCountForColor(
+			// color );
+
+			// float overpop = totalPop / ( nEdges + 1 );
+			float agoraphobia = totalMyColor / total;
+
+			// System.out.printf( " [%f/%d] (%f)%n", overpop,
+			// params.overPopulated, totalPop );
+
+			if (forHowLong < params.jump) {
 				forHowLong++;
 
-/*				if( overpop > params.overPopulated )
-				{	
-					ctx.incrSurpop();
+				/*
+				 * if( overpop > params.overPopulated ) { ctx.incrSurpop();
+				 * jumpRandomly(); forHowLong = 0; } else
+				 */// {
+				next = chooseEdge(P, totalPerceived, nEdges);
+				cross(next, true);
+				// }
+			} else {
+				if (agoraphobia <= params.agoraphobia) {
 					jumpRandomly();
+					// jumpFarAway( params.jump );
 					forHowLong = 0;
 				}
-				else
-*///				{
-					next = chooseEdge( P, totalPerceived, nEdges );
-					cross( next, true );				
-//				}
-			}
-			else
-			{
-				if( agoraphobia <= params.agoraphobia )
-				{
-					jumpRandomly();
-					//jumpFarAway( params.jump );
-					forHowLong = 0;
-				}
-/*				else if( overpop > params.overPopulated )
-				{
-					ctx.incrSurpop();
-					jumpRandomly();
-					forHowLong = 0;
-				}
-*/				else
-				{
-					next = chooseEdge( P, totalPerceived, nEdges );
-					cross( next, true );
+				/*
+				 * else if( overpop > params.overPopulated ) { ctx.incrSurpop();
+				 * jumpRandomly(); forHowLong = 0; }
+				 */else {
+					next = chooseEdge(P, totalPerceived, nEdges);
+					cross(next, true);
 				}
 			}
 		}
 	}
 
 	/**
-	 * Redefine the method to add the new current node in the ant memory (if memory is enabled).
-	 * @param edge The edge to cross.
-	 * @param depositPheromon Does pheromon is to be deposited on the crossed edge?.
+	 * Redefine the method to add the new current node in the ant memory (if
+	 * memory is enabled).
+	 * 
+	 * @param edge
+	 *            The edge to cross.
+	 * @param depositPheromon
+	 *            Does pheromon is to be deposited on the crossed edge?.
 	 */
-	public void cross( AntCo2Edge edge, boolean depositPheromon )
-	{
-		super.cross( edge, depositPheromon );
-		remember( curNode );
+	public void cross(AntCo2Edge edge, boolean depositPheromon) {
+		super.cross(edge, depositPheromon);
+		remember(curNode);
 	}
 
 	/**
 	 * Add the given node to the ant memory.
-	 * @param node The node to remember.
+	 * 
+	 * @param node
+	 *            The node to remember.
 	 */
-	protected void remember( AntCo2Node node )
-	{
-		mem.addLast( node );
-		
-		if( mem.size() > ctx.getAntParams().mem )
+	protected void remember(AntCo2Node node) {
+		mem.addLast(node);
+
+		if (mem.size() > ctx.getAntParams().mem)
 			mem.removeFirst();
 	}
 }

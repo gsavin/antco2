@@ -26,24 +26,21 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.AdjacencyListEdge;
 
 /**
- * Defines an edge crossable by ants.
- * Pheromons can be dropped on such edges.
+ * Defines an edge crossable by ants. Pheromons can be dropped on such edges.
  * 
  * @author adutot, gsavin
- *
+ * 
  */
-public class AntCo2Edge
-	extends AdjacencyListEdge
-{
+public class AntCo2Edge extends AdjacencyListEdge {
 	/**
 	 * Pheromone array.
 	 */
-	protected float [] pheromones = new float [1];
+	protected float[] pheromones = new float[1];
 
 	/**
 	 * Temporary pheromone array.
 	 */
-	protected float [] pheromonesTmp = new float [1];
+	protected float[] pheromonesTmp = new float[1];
 
 	/**
 	 * Total of all pheromones for all colours after the last commit().
@@ -64,109 +61,114 @@ public class AntCo2Edge
 	 * Is the edge between two distinct colours?.
 	 */
 	protected boolean cutEdge;
-	
+
 	/**
 	 * Weight of the edge.
 	 */
 	protected float value;
-	
+
 	/**
 	 * Basic constructor for an edge.
 	 * 
-	 * @param id id of the edge
-	 * @param from source node when edge is directed, else first extremity
-	 * @param to target node when edge is directed, else second extremity
-	 * @param directed is the edge directed or not
+	 * @param id
+	 *            id of the edge
+	 * @param from
+	 *            source node when edge is directed, else first extremity
+	 * @param to
+	 *            target node when edge is directed, else second extremity
+	 * @param directed
+	 *            is the edge directed or not
 	 */
-	public AntCo2Edge( String id, Node from, Node to, boolean directed )
-	{
-		super(id,from,to,directed);
+	public AntCo2Edge(String id, Node from, Node to, boolean directed) {
+		super(id, from, to, directed);
 	}
-	
+
 	/**
 	 * Constructor for an edge.
 	 * 
-	 * @param ctx ant context 
-	 * @param value weight of the edge
-	 * @param id id of the edge
-	 * @param from source node when edge is directed, else first extremity
-	 * @param to target node when edge is directed, else second extremity
-	 * @param directed is the edge directed or not
+	 * @param ctx
+	 *            ant context
+	 * @param value
+	 *            weight of the edge
+	 * @param id
+	 *            id of the edge
+	 * @param from
+	 *            source node when edge is directed, else first extremity
+	 * @param to
+	 *            target node when edge is directed, else second extremity
+	 * @param directed
+	 *            is the edge directed or not
 	 */
-	public AntCo2Edge( AntContext ctx, float value, String id, Node from, Node to, boolean directed )
-	{
-		this(id,from,to,directed);
-	
+	public AntCo2Edge(AntContext ctx, float value, String id, Node from,
+			Node to, boolean directed) {
+		this(id, from, to, directed);
+
 		this.value = value;
-		
-		pheromonesTmp = new float [ctx.getColonyCount()];
-		pheromones = new float [ctx.getColonyCount()];
+
+		pheromonesTmp = new float[ctx.getColonyCount()];
+		pheromones = new float[ctx.getColonyCount()];
 
 		// Initialise the pheromones to a very small value to avoid 0.
 
 		pheromonesTotal = 0;
 
-		for( int i = 0; i < ctx.getColonyCount(); ++i )
-		{
+		for (int i = 0; i < ctx.getColonyCount(); ++i) {
 			float nb = ctx.random().nextFloat() * 0.0001f;
 
-			pheromonesTmp [i] = nb;
-			pheromones [i] = nb;
+			pheromonesTmp[i] = nb;
+			pheromones[i] = nb;
 			pheromonesTotal += nb;
 		}
 
 		// Also avoid a weight of 0.
 
-		if( this.value == 0 )
+		if (this.value == 0)
 			this.value = 1;
 	}
-	
+
 	/**
-	 * switch: Commit all temporary changes to this object. The commit operation will
+	 * switch: Commit all temporary changes to this object. The commit operation
+	 * will
 	 * <ul>
 	 * <li>the pheromones;</li>
 	 * </ul>
 	 * Commit should only be called at the end of each AntCO² step.
 	 */
-	public void commit()
-	{
-		if( commitNeeded )
-		{
+	public void commit() {
+		if (commitNeeded) {
 			int n = pheromones.length;
 
-			for( int i = 0; i < n; ++i )
-			{
-				float incr = pheromonesTmp [i];
+			for (int i = 0; i < n; ++i) {
+				float incr = pheromonesTmp[i];
 
-				pheromones [i] += incr;
+				pheromones[i] += incr;
 				pheromonesTotal += incr;
-				pheromonesTmp [i] = 0;
+				pheromonesTmp[i] = 0;
 			}
 
 			commitNeeded = false;
 		}
 	}
-	
+
 	/**
-	 * Step method for this edge.
-	 * Pheromones evaporation is done here.
+	 * Step method for this edge. Pheromones evaporation is done here.
 	 * 
-	 * @param ctx ants context
+	 * @param ctx
+	 *            ants context
 	 */
-	public void step( AntContext ctx )
-	{
+	public void step(AntContext ctx) {
 		int n = pheromones.length;
 
-		if( n > 0 )
-		{
+		if (n > 0) {
 			// Evaporate the pheromones already present on the edge.
 
 			pheromonesTotal = 0;
 
-			for( int i = 0; i < n; ++i )
-				pheromones [i] *= ctx.getAntParams().rho;
+			for (int i = 0; i < n; ++i)
+				pheromones[i] *= ctx.getAntParams().rho;
 
-			// Then, and only then, copy pheromones added by ants at the previous
+			// Then, and only then, copy pheromones added by ants at the
+			// previous
 			// step to the pheromones on the edge.
 
 			commit();
@@ -177,16 +179,13 @@ public class AntCo2Edge
 			float max = Float.NEGATIVE_INFINITY;
 			int maxI = -1;
 
-			for( int i = 0; i < n; ++i )
-			{
-				if( ctx.getColony(i) != null )
-				{
-					float ph = pheromones [i];
+			for (int i = 0; i < n; ++i) {
+				if (ctx.getColony(i) != null) {
+					float ph = pheromones[i];
 
 					pheromonesTotal += ph;
 
-					if( ph > max )
-					{
+					if (ph > max) {
 						max = ph;
 						maxI = i;
 					}
@@ -204,126 +203,125 @@ public class AntCo2Edge
 
 	/**
 	 * Pheromone value for a given colour.
-	 * @param color Colour index.
+	 * 
+	 * @param color
+	 *            Colour index.
 	 * @return The pheromone value for a given colour.
 	 */
-	public float getPheromon( int color )
-	{
-		if( color >= 0 && pheromones.length > color )
-			return pheromones [color];
+	public float getPheromon(int color) {
+		if (color >= 0 && pheromones.length > color)
+			return pheromones[color];
 
 		return 0;
 	}
 
 	/**
 	 * Phromone value for all colours.
+	 * 
 	 * @return The total pheromone value.
 	 */
-	public float getPheromonTotal()
-	{
+	public float getPheromonTotal() {
 		return pheromonesTotal;
 	}
 
 	/**
 	 * Colour that have the more pheromone on this edge.
+	 * 
 	 * @return The dominant colour index.
 	 */
-	public int getDominantColor()
-	{
+	public int getDominantColor() {
 		return dominantColor;
 	}
 
 	/**
 	 * Is the edge between two nodes of distinct colours?.
 	 */
-	public boolean isCutEdge()
-	{
+	public boolean isCutEdge() {
 		return cutEdge;
 	}
 
 	/**
-	 * Set the pheromone value for a given colour. If the given colour is null all the colours are
-	 * changed. This directly changes the pheromone, no need to commit.
-	 * @param color Colour index or null for all the colours.
-	 * @param value Value to set.
+	 * Set the pheromone value for a given colour. If the given colour is null
+	 * all the colours are changed. This directly changes the pheromone, no need
+	 * to commit.
+	 * 
+	 * @param color
+	 *            Colour index or null for all the colours.
+	 * @param value
+	 *            Value to set.
 	 */
-	public void setPheromon( Colony color, float value )
-	{
-		if( color != null )
-		{
+	public void setPheromon(Colony color, float value) {
+		if (color != null) {
 			int index = color.getIndex();
 
-			checkPheromonesArraySizes( index );
-			
-			pheromonesTotal -= pheromones [index];
-			pheromones [index] = value;
-			pheromonesTotal += pheromones [index];
-		}
-		else
-		{
-			Arrays.fill(pheromones,value);
+			checkPheromonesArraySizes(index);
+
+			pheromonesTotal -= pheromones[index];
+			pheromones[index] = value;
+			pheromonesTotal += pheromones[index];
+		} else {
+			Arrays.fill(pheromones, value);
 			pheromonesTotal = value * pheromones.length;
 		}
 	}
 
 	/**
-	 * Increment the pheromone value for a given colour. If the given colour is null all the colours
-	 * are changed. This change is stored in a temporary buffer, you need to call commit() to make
-	 * it real.
-	 * @param color Colour index or null for all the colours.
-	 * @param value Value to add.
+	 * Increment the pheromone value for a given colour. If the given colour is
+	 * null all the colours are changed. This change is stored in a temporary
+	 * buffer, you need to call commit() to make it real.
+	 * 
+	 * @param color
+	 *            Colour index or null for all the colours.
+	 * @param value
+	 *            Value to add.
 	 */
-	public void incrPheromon( Colony color, float value )
-	{
+	public void incrPheromon(Colony color, float value) {
 		commitNeeded = true;
 
-		if( color != null )
-		{
+		if (color != null) {
 			int index = color.getIndex();
 
-			checkPheromonesArraySizes( index );
-			pheromonesTmp [index] += value;
-		}
-		else
-		{
-			for( int i = 0; i < pheromonesTmp.length; ++i )
-				pheromonesTmp [i] += value;
+			checkPheromonesArraySizes(index);
+			pheromonesTmp[index] += value;
+		} else {
+			for (int i = 0; i < pheromonesTmp.length; ++i)
+				pheromonesTmp[i] += value;
 		}
 	}
 
 	/**
 	 * Check that the antCountPerColor arrays are large enough.
+	 * 
 	 * @param index
 	 */
-	protected void checkPheromonesArraySizes( int index )
-	{
-		if( index >= pheromones.length )
-		{
+	protected void checkPheromonesArraySizes(int index) {
+		if (index >= pheromones.length) {
 			int n = pheromones.length;
-			
-			pheromonesTmp = Arrays.copyOf( pheromonesTmp, index + 1 );
-			pheromones    = Arrays.copyOf( pheromones, index + 1 );
-			
-			Arrays.fill(pheromones,n,index+1,0.000001f);
-			pheromonesTotal += 0.000001f * (index+1-n);
+
+			pheromonesTmp = Arrays.copyOf(pheromonesTmp, index + 1);
+			pheromones = Arrays.copyOf(pheromones, index + 1);
+
+			Arrays.fill(pheromones, n, index + 1, 0.000001f);
+			pheromonesTotal += 0.000001f * (index + 1 - n);
 		}
 	}
 
 	/**
 	 * Get the weight of the edge.
+	 * 
 	 * @return weight of the edge
 	 */
-	public float getValue()
-	{
+	public float getValue() {
 		return value;
 	}
 
 	/**
 	 * Set the weight of the edge.
-	 * @param value new weight of the edge
+	 * 
+	 * @param value
+	 *            new weight of the edge
 	 */
-	public void setValue(float value)
-	{
+	public void setValue(float value) {
 		this.value = value;
 	}
 }

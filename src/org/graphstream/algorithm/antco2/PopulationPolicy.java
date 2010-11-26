@@ -22,49 +22,58 @@ package org.graphstream.algorithm.antco2;
 
 /**
  * Defines the policy used to populate graph with ants.
+ * 
  * @author adutot, gsavin
- *
+ * 
  */
-public interface PopulationPolicy
-{
+public interface PopulationPolicy {
 	/**
 	 * Init the population policy.
-	 * @param ctx ants context
+	 * 
+	 * @param ctx
+	 *            ants context
 	 */
-	void init( AntContext ctx );
-	
+	void init(AntContext ctx);
+
 	/**
 	 * Defines a step of the policy.
 	 */
 	void step();
-	
+
 	/**
 	 * Get the ants count.
+	 * 
 	 * @return ants count
 	 */
 	int getAntCount();
-	
+
 	/**
 	 * Called when a node is added.
-	 * @param node added node
+	 * 
+	 * @param node
+	 *            added node
 	 */
-	void nodeAdded( AntCo2Node node );
-	
+	void nodeAdded(AntCo2Node node);
+
 	/**
 	 * Called when a node is removed.
-	 * @param node removed node
+	 * 
+	 * @param node
+	 *            removed node
 	 */
-	void nodeRemoved( AntCo2Node node );
-	
+	void nodeRemoved(AntCo2Node node);
+
 	/**
 	 * Called when a new colony is added.
+	 * 
 	 * @param colony
 	 */
-	void colonyAdded( Colony colony );
-	
+	void colonyAdded(Colony colony);
+
 	/**
 	 * Called when a colony is removed.
+	 * 
 	 * @param colony
 	 */
-	void colonyRemoved( Colony colony );
+	void colonyRemoved(Colony colony);
 }

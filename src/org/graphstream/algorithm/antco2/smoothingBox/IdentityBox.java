@@ -25,17 +25,13 @@ import org.graphstream.algorithm.antco2.AntContext;
 import org.graphstream.algorithm.antco2.Colony;
 import org.graphstream.algorithm.antco2.SmoothingBox;
 
-public class IdentityBox
-	implements SmoothingBox
-{
+public class IdentityBox implements SmoothingBox {
 
-	public void init( AntContext ctx )
-	{
+	public void init(AntContext ctx) {
 		// Nothing to do. This is a passive box.
 	}
 
-	public void submitColor( AntCo2Node node, Colony oldColor, Colony newColor )
-	{
+	public void submitColor(AntCo2Node node, Colony oldColor, Colony newColor) {
 		node.setColor(newColor);
 	}
 

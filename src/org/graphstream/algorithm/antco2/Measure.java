@@ -22,8 +22,6 @@ package org.graphstream.algorithm.antco2;
 
 import org.graphstream.algorithm.Algorithm;
 
-public interface Measure
-	extends Algorithm
-{
+public interface Measure extends Algorithm {
 	double getValue();
 }

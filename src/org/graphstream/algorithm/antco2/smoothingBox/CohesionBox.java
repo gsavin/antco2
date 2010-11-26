@@ -33,178 +33,162 @@ import org.graphstream.stream.ElementSink;
 
 import static java.lang.Math.pow;
 
-public class CohesionBox
-	implements SmoothingBox, ElementSink, AntCo2Listener
-{
-	protected class CohesionData
-	{
+public class CohesionBox implements SmoothingBox, ElementSink, AntCo2Listener {
+	protected class CohesionData {
 		AntCo2Node node;
-		float [] coloniesAttraction;
-		
-		CohesionData( AntCo2Node node )
-		{
+		float[] coloniesAttraction;
+
+		CohesionData(AntCo2Node node) {
 			this.node = node;
-			this.coloniesAttraction = new float [] { initialAttraction };
+			this.coloniesAttraction = new float[] { initialAttraction };
 		}
-		
-		void checkBounds( int index )
-		{
-			if( index >= coloniesAttraction.length )
-			{
+
+		void checkBounds(int index) {
+			if (index >= coloniesAttraction.length) {
 				int s = coloniesAttraction.length;
-				coloniesAttraction = Arrays.copyOf(coloniesAttraction,index+1);
-				for( int i=s; i<coloniesAttraction.length; i++ )
-					coloniesAttraction [i] = initialAttraction;
+				coloniesAttraction = Arrays.copyOf(coloniesAttraction,
+						index + 1);
+				for (int i = s; i < coloniesAttraction.length; i++)
+					coloniesAttraction[i] = initialAttraction;
 			}
 		}
-		
-		void attraction( Colony c )
-		{
+
+		void attraction(Colony c) {
 			int index = c.getIndex();
-			
-			if( coloniesAttraction [index] == 0 )
-				coloniesAttraction [index] = initialAttraction;
-			
+
+			if (coloniesAttraction[index] == 0)
+				coloniesAttraction[index] = initialAttraction;
+
 			float per = lowNodeCountAttraction(c);
-			
-			coloniesAttraction [index] = (float) pow( coloniesAttraction [index], 1 - attractionFactor * per );
-			//coloniesAttraction [index] = Math.min( coloniesAttraction [index] * (1 + attractionFactor), 1);
+
+			coloniesAttraction[index] = (float) pow(coloniesAttraction[index],
+					1 - attractionFactor * per);
+			// coloniesAttraction [index] = Math.min( coloniesAttraction [index]
+			// * (1 + attractionFactor), 1);
 		}
-		
-		void neighbor( int index, float per )
-		{
+
+		void neighbor(int index, float per) {
 			checkBounds(index);
-			
-			//coloniesAttraction [index] = (float) pow( coloniesAttraction [index], 1 - neighborAttraction );
-			coloniesAttraction [index] *=  1 + neighborAttraction * ( 1 - per );
-			//coloniesAttraction [index] = Math.min( coloniesAttraction [index] * (1 + neighborAttraction), 1);
+
+			// coloniesAttraction [index] = (float) pow( coloniesAttraction
+			// [index], 1 - neighborAttraction );
+			coloniesAttraction[index] *= 1 + neighborAttraction * (1 - per);
+			// coloniesAttraction [index] = Math.min( coloniesAttraction [index]
+			// * (1 + neighborAttraction), 1);
 		}
-		
-		int colonyIndex()
-		{
+
+		int colonyIndex() {
 			int index = 0;
-			
-			for( int i = 1; i < coloniesAttraction.length; i++ )
-				if( coloniesAttraction [i] > coloniesAttraction [index] ) index = i;
-			
+
+			for (int i = 1; i < coloniesAttraction.length; i++)
+				if (coloniesAttraction[i] > coloniesAttraction[index])
+					index = i;
+
 			return index;
 		}
-		
-		void tension()
-		{
-			for( int i = 0; i < coloniesAttraction.length; i++ )
-				//coloniesAttraction [i] = (float) pow( coloniesAttraction [i], 1 + tension );//tension;
-				coloniesAttraction [i] *= tension;
-			
-			for( AntCo2Edge edge : node.<AntCo2Edge>getEdgeSet() )
-			{
+
+		void tension() {
+			for (int i = 0; i < coloniesAttraction.length; i++)
+				// coloniesAttraction [i] = (float) pow( coloniesAttraction [i],
+				// 1 + tension );//tension;
+				coloniesAttraction[i] *= tension;
+
+			for (AntCo2Edge edge : node.<AntCo2Edge> getEdgeSet()) {
 				AntCo2Node ne = edge.getOpposite(node);
-				
-				if( ne.getColor() != null )
-				{
+
+				if (ne.getColor() != null) {
 					float per = lowNodeCountAttraction(ne.getColor());
-					neighbor( ne.getColor().getIndex(), per );
+					neighbor(ne.getColor().getIndex(), per);
 				}
 			}
-			
-			if( node.getColor() != null )
-				neighbor( node.getColor().getIndex(), 2 );
+
+			if (node.getColor() != null)
+				neighbor(node.getColor().getIndex(), 2);
 		}
-		
-		float lowNodeCountAttraction( Colony c )
-		{
-			return 1;// + lowNodeCountAttraction * ( 1 - c.getNodeCount() / (float) ctx.getNodeCount() );
+
+		float lowNodeCountAttraction(Colony c) {
+			return 1;// + lowNodeCountAttraction * ( 1 - c.getNodeCount() /
+						// (float) ctx.getNodeCount() );
 		}
 	}
-	
+
 	protected static float initialAttraction = 0.001f;
 	protected static float attractionFactor = 0.25f;
 	protected static float neighborAttraction = 0.125f;
-	//protected static float neighborPushing = 0.05f;
+	// protected static float neighborPushing = 0.05f;
 	protected static float tension = 0.99f;
-	
+
 	protected static float lowNodeCountAttraction = 0.1f;
-	
-	protected HashMap<String,CohesionData> data;
+
+	protected HashMap<String, CohesionData> data;
 	protected AntContext ctx;
-	
-	public void init( AntContext ctx )
-	{
+
+	public void init(AntContext ctx) {
 		this.ctx = ctx;
-		this.data = new HashMap<String,CohesionData>();
-		
+		this.data = new HashMap<String, CohesionData>();
+
 		ctx.getInternalGraph().addElementSink(this);
 		ctx.addAntCo2Listener(this);
 	}
 
-	public void submitColor( AntCo2Node node, Colony oldColor, 
-			Colony newColor )
-	{
+	public void submitColor(AntCo2Node node, Colony oldColor, Colony newColor) {
 		CohesionData cd = data.get(node.getId());
-		
-		if( cd == null )
-		{
+
+		if (cd == null) {
 			cd = new CohesionData(node);
-			
-			data.put(node.getId(),cd);
+
+			data.put(node.getId(), cd);
 		}
-		
-		if( newColor == null )
+
+		if (newColor == null)
 			return;
-		
-		if( oldColor != null )
+
+		if (oldColor != null)
 			cd.checkBounds(oldColor.getIndex());
 		cd.checkBounds(newColor.getIndex());
-		
+
 		cd.attraction(newColor);
-		
-		node.setColor( ctx.getColony(cd.colonyIndex()) );
+
+		node.setColor(ctx.getColony(cd.colonyIndex()));
 	}
 
-	public void nodeRemoved(String sourceId, long timeId, String nodeId)
-	{
+	public void nodeRemoved(String sourceId, long timeId, String nodeId) {
 		data.remove(nodeId);
 	}
 
-	public void graphCleared(String sourceId, long timeId)
-	{
+	public void graphCleared(String sourceId, long timeId) {
 		data.clear();
 	}
 
-	public void nodeAdded(String sourceId, long timeId, String nodeId)
-	{
-		
+	public void nodeAdded(String sourceId, long timeId, String nodeId) {
+
 	}
 
 	public void edgeAdded(String sourceId, long timeId, String edgeId,
-			String fromNodeId, String toNodeId, boolean directed)
-	{
-		
+			String fromNodeId, String toNodeId, boolean directed) {
+
 	}
 
-	public void edgeRemoved(String sourceId, long timeId, String edgeId)
-	{
-		
+	public void edgeRemoved(String sourceId, long timeId, String edgeId) {
+
 	}
 
-	public void stepBegins(String sourceId, long timeId, double step)
-	{
-		
+	public void stepBegins(String sourceId, long timeId, double step) {
+
 	}
 
-	public void step(AntContext ctx)
-	{
-		for( CohesionData cd : data.values() )
+	public void step(AntContext ctx) {
+		for (CohesionData cd : data.values())
 			cd.tension();
 	}
 
 	public void colonyAdded(Colony c) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void colonyRemoved(Colony c) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

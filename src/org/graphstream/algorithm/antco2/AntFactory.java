@@ -24,16 +24,17 @@ package org.graphstream.algorithm.antco2;
  * Defines the factory used to create ants.
  * 
  * @author adutot, gsavin
- *
+ * 
  */
-public interface AntFactory
-{
+public interface AntFactory {
 	/**
 	 * Create a new ant.
 	 * 
-	 * @param id id of the ant
-	 * @param start position of the ant
+	 * @param id
+	 *            id of the ant
+	 * @param start
+	 *            position of the ant
 	 * @return an ant
 	 */
-	Ant newAnt( String id, AntCo2Node start );
+	Ant newAnt(String id, AntCo2Node start);
 }

@@ -24,32 +24,25 @@ import org.graphstream.algorithm.antco2.Colony;
 
 /**
  * AleamyrmexColony.
- *
+ * 
  * @author Antoine Dutot
  * @since 29 juil. 2005
  */
-public class AleamyrmexColony
-	extends Colony
-{
-	class AleamyrmexFactory
-		implements AntFactory
-	{
-		public Ant newAnt( String id, AntCo2Node start )
-		{
-			return new Aleamyrmex(id,AleamyrmexColony.this,start,ctx);
+public class AleamyrmexColony extends Colony {
+	class AleamyrmexFactory implements AntFactory {
+		public Ant newAnt(String id, AntCo2Node start) {
+			return new Aleamyrmex(id, AleamyrmexColony.this, start, ctx);
 		}
 	}
-// Constructors
 
-	public AleamyrmexColony()
-	{
+	// Constructors
+
+	public AleamyrmexColony() {
 		antFactory = new AleamyrmexFactory();
 	}
-	
-	public
-	AleamyrmexColony( AntContext context, String name, int index )
-	{
-		super( context, name, index );
+
+	public AleamyrmexColony(AntContext context, String name, int index) {
+		super(context, name, index);
 		antFactory = new AleamyrmexFactory();
 	}
 }

@@ -24,17 +24,18 @@ package org.graphstream.algorithm.antco2;
  * Defines objects listening to antco2.
  * 
  * @author adutot, gsavin
- *
+ * 
  */
-public interface AntCo2Listener
-{
+public interface AntCo2Listener {
 	/**
 	 * Algorithm step.
-	 * @param ctx ants context
+	 * 
+	 * @param ctx
+	 *            ants context
 	 */
-	void step( AntContext ctx );
-	
-	void colonyAdded( Colony c );
-	
-	void colonyRemoved( Colony c );
+	void step(AntContext ctx);
+
+	void colonyAdded(Colony c);
+
+	void colonyRemoved(Colony c);
 }

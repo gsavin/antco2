@@ -25,32 +25,28 @@ import org.graphstream.algorithm.antco2.Colony;
 
 import static java.lang.Math.max;
 
-public class R1M
-	extends R1
-{
+public class R1M extends R1 {
 	double m;
 	double weight = 3;
-	
-	public void compute()
-	{
+
+	public void compute() {
 		super.compute();
-		
-		if( graph instanceof AntCo2Graph )
-		{
+
+		if (graph instanceof AntCo2Graph) {
 			AntCo2Graph ag = (AntCo2Graph) graph;
-			
+
 			double s = 0;
-			
-			for( Colony c : ag.getAntContext().eachColony() )
-				s = max( s, (double) c.getMigrationCountForThisStep() / (double) c.getNodeCountAtStepBeginning() );
-			
+
+			for (Colony c : ag.getAntContext().eachColony())
+				s = max(s, (double) c.getMigrationCountForThisStep()
+						/ (double) c.getNodeCountAtStepBeginning());
+
 			m = s;
-		}
-		else throw new ClassCastException("graph is not a AntCo2Graph");
+		} else
+			throw new ClassCastException("graph is not a AntCo2Graph");
 	}
-	
-	public double getValue()
-	{
-		return Math.pow( r1, Math.pow(1-m,weight) );
+
+	public double getValue() {
+		return Math.pow(r1, Math.pow(1 - m, weight));
 	}
 }

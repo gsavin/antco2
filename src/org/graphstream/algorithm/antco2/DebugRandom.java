@@ -23,99 +23,85 @@ package org.graphstream.algorithm.antco2;
 import java.io.PrintStream;
 import java.util.Random;
 
-public class DebugRandom
-	extends Random
-{
+public class DebugRandom extends Random {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -633739369794868587L;
-	
-	public DebugRandom( long seed )
-	{
+
+	public DebugRandom(long seed) {
 		super(seed);
 	}
-	
-	public int nextInt()
-	{
+
+	public int nextInt() {
 		int n = super.nextInt();
-		log( String.format("[nextInt()] %d", n));
+		log(String.format("[nextInt()] %d", n));
 		return n;
 	}
-	
-	public int nextInt(int max)
-	{
+
+	public int nextInt(int max) {
 		int n = super.nextInt(max);
-		log( String.format("[nextInt(%d)] %d", max, n));
+		log(String.format("[nextInt(%d)] %d", max, n));
 		return n;
 	}
-	
-	public long nextLong()
-	{
+
+	public long nextLong() {
 		long n = super.nextLong();
-		log( String.format("[nextLong()] %d", n));
+		log(String.format("[nextLong()] %d", n));
 		return n;
 	}
-	
-	public float nextFloat()
-	{
+
+	public float nextFloat() {
 		float n = super.nextFloat();
-		log( String.format("[nextFloat()] %f", n));
+		log(String.format("[nextFloat()] %f", n));
 		return n;
 	}
-	
-	public double nextDouble()
-	{
+
+	public double nextDouble() {
 		double n = super.nextDouble();
-		log( String.format("[nextDouble()] %f", n));
+		log(String.format("[nextDouble()] %f", n));
 		return n;
 	}
-	
-	public boolean nextBoolean()
-	{
+
+	public boolean nextBoolean() {
 		boolean n = super.nextBoolean();
-		log( String.format("[nextBoolean()] %s", n));
+		log(String.format("[nextBoolean()] %s", n));
 		return n;
 	}
-	
-	public double nextGaussian()
-	{
+
+	public double nextGaussian() {
 		double n = super.nextGaussian();
-		log( String.format("[nextGaussian()] %f", n));
+		log(String.format("[nextGaussian()] %f", n));
 		return n;
 	}
-	
-	public void nextBytes( byte [] bytes )
-	{
+
+	public void nextBytes(byte[] bytes) {
 		super.nextBytes(bytes);
-		log( String.format("[nextBytes()]"));;
+		log(String.format("[nextBytes()]"));
+		;
 	}
-	
-	public void setSeed( long seed )
-	{
+
+	public void setSeed(long seed) {
 		super.setSeed(seed);
-		log( String.format("[setSeed()] %d", seed) );
+		log(String.format("[setSeed()] %d", seed));
 	}
-	
-	protected void log( String msg )
-	{
+
+	protected void log(String msg) {
 		Exception e = new Exception();
-		StackTraceElement [] stack = e.getStackTrace();
-		
+		StackTraceElement[] stack = e.getStackTrace();
+
 		String callInfo = "";
-		
-		for( int i = stack.length - 3; i > 1; i-- )
-		{
-			String classname = stack [i].getClassName();
-			
-			if( classname.indexOf('.') >= 0)
-				classname = classname.substring(classname.lastIndexOf('.')+1);
-			
-			callInfo = String.format("%s%s:%s:%d > ", callInfo, 
-					classname, stack [i].getMethodName(), stack[i].getLineNumber());
+
+		for (int i = stack.length - 3; i > 1; i--) {
+			String classname = stack[i].getClassName();
+
+			if (classname.indexOf('.') >= 0)
+				classname = classname.substring(classname.lastIndexOf('.') + 1);
+
+			callInfo = String.format("%s%s:%s:%d > ", callInfo, classname,
+					stack[i].getMethodName(), stack[i].getLineNumber());
 		}
-		
-		
-		Debug.log(String.format("[random] %s%s%n",callInfo,msg));
+
+		Debug.log(String.format("[random] %s%s%n", callInfo, msg));
 	}
 }

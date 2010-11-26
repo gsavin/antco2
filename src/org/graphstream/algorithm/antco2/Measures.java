@@ -30,58 +30,91 @@ import org.graphstream.algorithm.antco2.measure.R1;
 import org.graphstream.algorithm.antco2.measure.R2;
 import org.graphstream.algorithm.antco2.measure.R3;
 
-public class Measures
-{
+public class Measures {
+	public static enum KnownMeasure {
+		R1, R2, R3, DATA
+	}
+
 	LinkedList<Measure> measures;
-	
+
 	PrintStream out;
-	
+
 	int step;
-	
-	public Measures()
-	{
+
+	public Measures() {
 		measures = new LinkedList<Measure>();
 		measures.add(new R1());
 		measures.add(new R2());
 		measures.add(new R3());
 		measures.add(new Data());
 	}
-	
-	public void init( AntContext ctx )
-	{
-		for( Measure m: measures )
+
+	public void init(AntContext ctx) {
+		measures.clear();
+
+		String measuresComputed = ctx.getAntParams().getComputedMeasures()
+				.trim();
+
+		if (measuresComputed.length() > 0) {
+			String[] computedMeasures = measuresComputed.split(",");
+
+			if (computedMeasures != null) {
+				for (String m : computedMeasures) {
+					m = m.trim();
+					KnownMeasure km = KnownMeasure.valueOf(m);
+
+					switch (km) {
+					case R1:
+						measures.add(new R1());
+						break;
+					case R2:
+						measures.add(new R2());
+						break;
+					case R3:
+						measures.add(new R3());
+						break;
+					case DATA:
+						measures.add(new Data());
+						break;
+					}
+				}
+			}
+		}
+
+		for (Measure m : measures)
 			m.init(ctx.internalGraph);
-		
+
+		if (out != null)
+			out.close();
+
 		out = null;
-		
-		if( ctx.getOutputMeasures() != null )
-		{
+
+		if (ctx.getAntParams().isMeasuresOutput()) {
 			try {
-				out = new PrintStream(ctx.getOutputMeasures());
+				out = new PrintStream(ctx.getAntParams()
+						.getOutputMeasuresPath());
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
-	public void step()
-	{
-		for( Measure m: measures )
+
+	public void step() {
+		for (Measure m : measures)
 			m.compute();
-		
-		if( out != null )
+
+		if (out != null)
 			output();
-		
+
 		step++;
 	}
-	
-	public void output()
-	{
-		out.printf("%d",step);
-		
-		for( Measure m: measures )
-			out.printf(Locale.ROOT,"\t%f",m.getValue());
-		
+
+	public void output() {
+		out.printf("%d", step);
+
+		for (Measure m : measures)
+			out.printf(Locale.ROOT, "\t%f", m.getValue());
+
 		out.printf("%n");
 		out.flush();
 	}

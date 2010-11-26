@@ -25,136 +25,160 @@ import org.graphstream.graph.Graph;
 import org.graphstream.stream.SinkAdapter;
 import org.graphstream.stream.thread.ThreadProxyPipe;
 
-public class AntCo2Algorithm
-	extends SinkAdapter implements DynamicAlgorithm
-{
-	AntContext context;
-	ThreadProxyPipe	proxy;
-	
-	Graph registeredGraph;
-	
-	
-	public AntCo2Algorithm()
-	{
-		context   = new AntContext();
+import static org.graphstream.algorithm.antco2.Parameter.parameter;
+import static org.graphstream.algorithm.antco2.Parameter.processParameters;
+
+public class AntCo2Algorithm extends SinkAdapter implements DynamicAlgorithm {
+	protected AntContext context;
+	protected ThreadProxyPipe proxy;
+
+	protected String metaIndexAttribute = "meta.index";
+
+	@DefineParameter(name = "graph", optional = false)
+	protected Graph registeredGraph;
+
+	public AntCo2Algorithm() {
+		context = new AntContext();
 	}
 
-	public AntContext getContext()
-	{
+	public AntContext getContext() {
 		return context;
 	}
-	
-	public Graph getRegisteredGraph()
-	{
+
+	public String getMetaIndexAttribute() {
+		return metaIndexAttribute;
+	}
+
+	public Graph getRegisteredGraph() {
 		return registeredGraph;
 	}
-	
-	public void addAntCo2Listener( AntCo2Listener listener )
-	{
+
+	public void addAntCo2Listener(AntCo2Listener listener) {
 		context.addAntCo2Listener(listener);
 	}
-	
-	public void removeAntCo2Listener( AntCo2Listener listener )
-	{
+
+	public void removeAntCo2Listener(AntCo2Listener listener) {
 		context.removeAntCo2Listener(listener);
 	}
-	
-	public void init(Graph graph)
-	{
-		proxy = new ThreadProxyPipe(graph);
-		proxy.addSink( context.internalGraph );
-		
-		registeredGraph = graph;
-		
-		graph.addAttributeSink(this);
-		
+
+	public void init(Parameter... params) {
+		if (registeredGraph != null) {
+			registeredGraph.removeSink(this);
+		}
+
+		try {
+			processParameters(new Object[] { this, context.getAntParams() },
+					params);
+		} catch (InvalidParameterException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		} catch (MissingParameterException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+
+		registeredGraph.addAttributeSink(this);
+
+		if (proxy == null) {
+			proxy = new ThreadProxyPipe(registeredGraph);
+			proxy.addSink(context.internalGraph);
+		}
+
 		context.init();
 	}
 
-	public void compute()
-	{
+	public void init(Graph graph) {
+		init(parameter("graph", graph));
+	}
+
+	public void compute() {
 		proxy.pump();
-		
+
 		context.step();
 		publishColor();
-		
+
 		proxy.pump();
 	}
-	
+
 	public void terminate() {
-		if( registeredGraph != null )
+		if (registeredGraph != null)
 			registeredGraph.removeSink(proxy);
-		
+
 		proxy.removeSink(context.internalGraph);
 	}
-	
-	public void publishColor()
-	{
-		if( registeredGraph != null )
-		{
+
+	public void publishColor() {
+		if (registeredGraph != null) {
 			context.lock();
-			
+
 			Colony c0, c1;
-			
-			for( AntCo2Node n : context.eachNode() )
-			{
+
+			for (AntCo2Node n : context.eachNode()) {
 				c0 = n.getOldColor();
 				c1 = n.getColor();
-				//Cell c = n.getCell();
-				
-				// registeredGraph.nodeAttributeChanged( context.sourceId(), context.timeId(), n.getId(), 
-				//		"ui.label", c0 == null ? null : c0.getName(), c1 == null ? null : c1.getName() );
-				registeredGraph.nodeAttributeChanged( context.sourceId(), context.timeId(), n.getId(), 
-						"meta.index", null, c0 == null ? null : c0.getIndex() );
-				//n.setAttribute("meta.index", c0 == null ? null : c0.getIndex());
-				registeredGraph.nodeAttributeChanged( context.sourceId(), context.timeId(), n.getId(), 
-						"ui.color", c0 == null ? null : c0.getIndex() / (float) context.getColonyCount(), c1 == null ? null : c1.getIndex() / (float) context.getColonyCount() );
-				
-				if( n.isMembrane() )
-				{
-					registeredGraph.nodeAttributeChanged( context.sourceId(), context.timeId(), n.getId(),
-							"ui.class", null, "membrane" );
+
+				if (c1 == null)
+					continue;
+				// Cell c = n.getCell();
+
+				// registeredGraph.nodeAttributeChanged( context.sourceId(),
+				// context.timeId(), n.getId(),
+				// "ui.label", c0 == null ? null : c0.getName(), c1 == null ?
+				// null : c1.getName() );
+				registeredGraph.nodeAttributeChanged(context.sourceId(),
+						context.timeId(), n.getId(), metaIndexAttribute,
+						c0 == null ? null : c0.getIndex(), c1 == null ? null
+								: c1.getIndex());
+				// n.setAttribute("meta.index", c0 == null ? null :
+				// c0.getIndex());
+				registeredGraph.nodeAttributeChanged(
+						context.sourceId(),
+						context.timeId(),
+						n.getId(),
+						"label",
+						c0 == null ? null : c0.getIndex(),
+						c1 == null ? null : c1.getIndex());
+				/*
+				if (n.isMembrane()) {
+					registeredGraph.nodeAttributeChanged(context.sourceId(),
+							context.timeId(), n.getId(), "ui.class", null,
+							"membrane");
+				} else {
+					registeredGraph.nodeAttributeRemoved(context.sourceId(),
+							context.timeId(), n.getId(), "ui.class");
 				}
-				else
-				{
-					registeredGraph.nodeAttributeRemoved( context.sourceId(), context.timeId(), n.getId(), "ui.class" );
-				}
+				*/
 			}
-			
+
 			context.unlock();
 		}
 	}
 
 	public void graphAttributeAdded(String sourceId, long timeId,
 			String attribute, Object value) {
-		if( attribute.equals("antco2.resources") )
-			resourcesHandler( value.toString() );
+		if (attribute.equals("antco2.resources"))
+			resourcesHandler(value.toString());
 	}
 
 	public void graphAttributeChanged(String sourceId, long timeId,
 			String attribute, Object oldValue, Object newValue) {
-		if( attribute.equals("antco2.resources") )
-			resourcesHandler( newValue.toString() );
+		if (attribute.equals("antco2.resources"))
+			resourcesHandler(newValue.toString());
 	}
-	
-	public void resourcesHandler( String s )
-	{
+
+	public void resourcesHandler(String s) {
 		s = s.trim();
-		if( s.matches( "^(\\+|-)\\s+.*$" ) )
-		{
+		if (s.matches("^(\\+|-)\\s+.*$")) {
 			String resource = s.substring(2).trim();
-			
-			if( s.startsWith("+") )
-			{
+
+			if (s.startsWith("+")) {
 				context.lock();
-				System.out.printf("add colony: %s%n", resource );
+				System.out.printf("add colony: %s%n", resource);
 				context.addColony(resource);
 				context.unlock();
-			}
-			else
-			{
+			} else {
 				context.lock();
-				System.out.printf("del colony: %s%n", resource );
+				System.out.printf("del colony: %s%n", resource);
 				context.removeColony(resource);
 				context.unlock();
 			}

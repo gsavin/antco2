@@ -28,56 +28,54 @@ import org.graphstream.graph.Graph;
  * This measure defines the communication load of the graph.
  * 
  * @author Guilhelm Savin
- *
+ * 
  */
-public class R1
-	implements Measure
-{
+public class R1 implements Measure {
 	/**
 	 * The computed measure.
 	 */
 	double r1;
-	
+
 	/**
 	 * The graph on which measure is computed.
 	 */
 	Graph graph;
-	
+
 	/*
 	 * (non-Javadoc)
-	 * @see org.graphstream.algorithm.Algorithm#init(org.graphstream.graph.Graph)
+	 * 
+	 * @see
+	 * org.graphstream.algorithm.Algorithm#init(org.graphstream.graph.Graph)
 	 */
-	public void init( Graph graph )
-	{
+	public void init(Graph graph) {
 		this.graph = graph;
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.graphstream.algorithm.Algorithm#compute()
 	 */
-	public void compute()
-	{
+	public void compute() {
 		double dA = 0;
 		double dE = 0;
-		
-		for( AntCo2Edge e: graph.<AntCo2Edge>getEachEdge() )
-		{
-			if( e.isCutEdge() )
+
+		for (AntCo2Edge e : graph.<AntCo2Edge> getEachEdge()) {
+			if (e.isCutEdge())
 				dA += e.getValue();
-			
+
 			dE += e.getValue();
 		}
-		
+
 		r1 = dA / dE;
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.graphstream.algorithm.antco2.Measure#getValue()
 	 */
-	public double getValue()
-	{
+	public double getValue() {
 		return r1;
 	}
 }

@@ -21,27 +21,23 @@
 package org.graphstream.algorithm.antco2;
 
 /**
- * Add a mechanism between AntCo2 and the graph to smooth the result of
- * the algorithm, avoiding oscillation of entities from one organization
- * to another.
+ * Add a mechanism between AntCo2 and the graph to smooth the result of the
+ * algorithm, avoiding oscillation of entities from one organization to another.
  * 
  * @author Guilhelm Savin
- *
+ * 
  */
-public interface SmoothingBox
-{
-	public static enum BoxType
-	{
-		IDENTITY_BOX,
-		TIMED_BOX
+public interface SmoothingBox {
+	public static enum BoxType {
+		IDENTITY_BOX, TIMED_BOX
 	}
-	
+
 	/**
 	 * Initialization of the box.
 	 * 
 	 * @param algo
 	 */
-	void init( AntContext ctx );
+	void init(AntContext ctx);
 
 	/**
 	 * Submit a color change for a node.
@@ -53,5 +49,5 @@ public interface SmoothingBox
 	 * @param newColor
 	 *            new color of the node
 	 */
-	void submitColor( AntCo2Node node, Colony oldColor, Colony newColor );
+	void submitColor(AntCo2Node node, Colony oldColor, Colony newColor);
 }

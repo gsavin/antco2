@@ -25,40 +25,33 @@ import org.graphstream.algorithm.antco2.Colony;
 import org.graphstream.algorithm.antco2.Measure;
 import org.graphstream.graph.Graph;
 
-public class R2
-	implements Measure
-{
+public class R2 implements Measure {
 	double r2;
-	
+
 	Graph graph;
-	
-	public void init(Graph graph)
-	{
+
+	public void init(Graph graph) {
 		this.graph = graph;
 	}
 
-	public void compute()
-	{
-		if( graph instanceof AntCo2Graph )
-		{
+	public void compute() {
+		if (graph instanceof AntCo2Graph) {
 			AntCo2Graph ag = (AntCo2Graph) graph;
-			
+
 			int min = Integer.MAX_VALUE;
 			int max = Integer.MIN_VALUE;
-			
-			for( Colony c : ag.getAntContext().eachColony() )
-			{
-				min = Math.min( min, c.getNodeCount() );
-				max = Math.max( max, c.getNodeCount() );
+
+			for (Colony c : ag.getAntContext().eachColony()) {
+				min = Math.min(min, c.getNodeCount());
+				max = Math.max(max, c.getNodeCount());
 			}
-			
+
 			r2 = (double) min / (double) max;
-		}
-		else throw new ClassCastException("graph is not a AntCo2Graph");
+		} else
+			throw new ClassCastException("graph is not a AntCo2Graph");
 	}
 
-	public double getValue()
-	{
+	public double getValue() {
 		return r2;
 	}
 

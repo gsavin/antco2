@@ -24,15 +24,15 @@ package org.graphstream.algorithm.antco2;
  * Factory used to create colony.
  * 
  * @author adutot, gsavin
- *
+ * 
  */
-public class ColonyFactory
-{
+public class ColonyFactory {
 	/**
-	 * Create a new colony.
-	 * Class of the colony is given in parameters of the context.
+	 * Create a new colony. Class of the colony is given in parameters of the
+	 * context.
 	 * 
-	 * @param actx ants context
+	 * @param actx
+	 *            ants context
 	 * @return a new colony
 	 * @throws ClassNotFoundException
 	 * @throws InstantiationException
@@ -40,17 +40,18 @@ public class ColonyFactory
 	 * @throws ExceptionInInitializerError
 	 * @throws SecurityException
 	 */
-	public static Colony newColony( AntContext actx )
-		throws ClassNotFoundException, InstantiationException,
-    	IllegalAccessException, ExceptionInInitializerError, SecurityException
-	{
-		Class<?> clazz = Class.forName( actx.getAntParams().colonySpecies );
+	public static Colony newColony(AntContext actx)
+			throws ClassNotFoundException, InstantiationException,
+			IllegalAccessException, ExceptionInInitializerError,
+			SecurityException {
+		Class<?> clazz = Class.forName(actx.getAntParams().colonySpecies);
 
 		Object o = clazz.newInstance();
 
-		if( !( o instanceof Colony ) )
-			throw new InstantiationException( "The ant species given '" + actx.getAntParams().colonySpecies
-			        + "' is not an instance of antco2.Colony" );
+		if (!(o instanceof Colony))
+			throw new InstantiationException("The ant species given '"
+					+ actx.getAntParams().colonySpecies
+					+ "' is not an instance of antco2.Colony");
 
 		return (Colony) o;
 	}
