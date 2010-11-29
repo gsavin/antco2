@@ -161,8 +161,9 @@ public class AntParams {
 	 */
 	public void defaults() {
 		// randomSeed = System.currentTimeMillis();
-		randomSeed = 7461358159815L;
 		// colors = 4;
+		/*
+		randomSeed = 7461358159815L;
 		antsPerVertex = 8;
 		antsPerVertexPerColor = 8;
 		rho = 0.86f;
@@ -176,6 +177,22 @@ public class AntParams {
 		colonySpecies = org.graphstream.algorithm.antco2.species.ParsimoniamyrmexColony.class
 				.getName();
 		perColorOverpop = true;
+		*/
+		
+		randomSeed = System.currentTimeMillis();
+		antsPerVertex = 10;
+		antsPerVertexPerColor = 10;
+		rho = 0.9f;
+		pheromoneDrop = 0.1f;
+		alpha = 1.0f;
+		beta = 4.0f;
+		overPopulated = 5;
+		mem = 4;
+		agoraphobia = 0.3f;
+		jump = 1;
+		colonySpecies = org.graphstream.algorithm.antco2.species.AgoraphomyrmexColony.class.getName();
+		perColorOverpop = true;
+		
 		// powers = null;
 		// tabu = 0.0001f;
 		// flytox = 0;

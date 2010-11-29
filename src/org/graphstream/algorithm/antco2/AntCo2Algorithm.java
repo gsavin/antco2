@@ -34,6 +34,8 @@ public class AntCo2Algorithm extends SinkAdapter implements DynamicAlgorithm {
 
 	protected String metaIndexAttribute = "meta.index";
 
+	protected boolean colorizeNodes = true;
+	
 	@DefineParameter(name = "graph", optional = false)
 	protected Graph registeredGraph;
 
@@ -131,13 +133,36 @@ public class AntCo2Algorithm extends SinkAdapter implements DynamicAlgorithm {
 								: c1.getIndex());
 				// n.setAttribute("meta.index", c0 == null ? null :
 				// c0.getIndex());
-				registeredGraph.nodeAttributeChanged(
+				/*registeredGraph.nodeAttributeChanged(
 						context.sourceId(),
 						context.timeId(),
 						n.getId(),
 						"label",
 						c0 == null ? null : c0.getIndex(),
-						c1 == null ? null : c1.getIndex());
+						c1 == null ? null : c1.getIndex());*/
+				if(colorizeNodes) {
+					registeredGraph.nodeAttributeChanged(
+							context.sourceId(),
+							context.timeId(),
+							n.getId(),
+							"ui.color",
+							null,
+							c1 == null ? 0 : c1.getIndex() / (float) context.getColonyCount());
+				}
+				if(n.isMembrane()) {
+					registeredGraph.nodeAttributeAdded(
+							context.sourceId(),
+							context.timeId(),
+							n.getId(),
+							"meta.membrane", true);
+				}
+				else {
+					registeredGraph.nodeAttributeRemoved(
+							context.sourceId(),
+							context.timeId(),
+							n.getId(),
+							"meta.membrane");
+				}
 				/*
 				if (n.isMembrane()) {
 					registeredGraph.nodeAttributeChanged(context.sourceId(),

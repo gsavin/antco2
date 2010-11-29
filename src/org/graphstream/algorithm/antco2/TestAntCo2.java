@@ -110,9 +110,13 @@ public class TestAntCo2 {
 		// antco2.init(g);
 		antco2.init(
 				parameter("graph", g),
+				parameter("antco2.params.globalFilePrefix","test_identity_"),
+				parameter("antco2.params.measuresOutput", true),
+				parameter("antco2.params.computedMeasures", "R1,R2,R3,DATA"),
 				parameter("antco2.params.smoothingBoxPolicy",
-						AntParams.SmoothingBoxPolicy.COHESION));
+						AntParams.SmoothingBoxPolicy.IDENTITY));
 
+		/*
 		g.display(false);
 
 		String stylesheet = "graph { " + "  fill-color: white;"
@@ -125,7 +129,7 @@ public class TestAntCo2 {
 		g.addAttribute("ui.stylesheet", stylesheet);
 		g.addAttribute("ui.quality");
 		// g.addAttribute( "ui.antialias" );
-
+		 */
 		g.addAttribute("antco2.resources", "+ A");
 		g.addAttribute("antco2.resources", "+ B");
 		g.addAttribute("antco2.resources", "+ C");
@@ -141,12 +145,13 @@ public class TestAntCo2 {
 		for (int i = 0; i < step; i++) {
 			antco2.compute();
 			pDisplay.setProgress(i);
-
+			/*
 			try {
-				Thread.sleep(6);
+				Thread.sleep(50);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			*/
 		}
 
 		pDisplay.end();

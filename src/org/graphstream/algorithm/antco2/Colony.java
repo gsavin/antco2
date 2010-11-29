@@ -276,6 +276,8 @@ public abstract class Colony {
 		assert node.getColor() != this;
 	}
 
+	int antIdGenerator = 0;
+	
 	/**
 	 * Add a new ant to the colony. This method only register an "add action"
 	 * but will effectively add the ant only when {@link #commit()} is called.
@@ -292,6 +294,12 @@ public abstract class Colony {
 		if (antsDel.get(id) != null)
 			antsDel.remove(id);
 
+		if( id == null ) {
+			id = String.format("%s_%05x",name,antIdGenerator++);
+		}
+		
+		//System.out.printf("add ant \"%s\"%n",id);
+		
 		if (antsAdd.get(id) == null) {
 			Ant ant = antFactory().newAnt(id, start);
 			antsAdd.put(id, ant);
@@ -364,7 +372,7 @@ public abstract class Colony {
 		migrationForThisStep = 0;
 		migrationCostForThisStep = 0;
 		nodeCountAtStepBeginning = getNodeCount();
-
+		
 		for (Ant ant : ants.values()) {
 			ant.step();
 		}
